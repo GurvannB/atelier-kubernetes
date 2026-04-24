@@ -132,7 +132,7 @@ validé en prod en explicitant les étapes git.
   - Mise à jour via ConfigMap
   - Injection des secrets
   - Synchronisation ArgoCD
-  - 
+  
 ## Remarques
 - Vous devez rechercher par vous-même les syntaxes YAML et commandes nécessaires
 - L’utilisation de la documentation officielle est encouragée

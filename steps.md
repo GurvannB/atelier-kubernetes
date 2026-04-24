@@ -191,3 +191,45 @@ kubectl get pods # Vérifie que les pods ont été redémarrés pour prendre en 
 En allant sur notre navigateur à l'adresse http://<IP_EXTERNE> utilisée plus tôt, on voit que le nom d'utilisateur a bien été modifié
 
 Si on a besoin de le modifier, il suffit de changer les valeurs dans secret.yaml, dde le réappliquer et de restart le deployment
+
+## Étape 5
+
+Tout d'abord, on crée un namespace dédié à argocd : 
+
+```bash
+kubectl create namespace argocd
+```
+
+Ensuite, on installe ArgoCD dans ce namespace :
+
+```bash
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+```
+
+Après l'installation, on vérifie que les pods d'ArgoCD sont en état Running :
+
+```bash
+kubectl get pods -n argocd
+```
+On récupère le mot de passe du panneau de configuration d'argocd (le mot de passe est stocké dans un secret Kubernetes) :
+
+```bash
+kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath="{.data.password}" | base64 -d
+```
+
+On peut se connecter au dashboard argocd avec le port forwarding (on se permet de faire du port forwarding car on n'a pas besoin d'exposer argocd à l'extérieur du cluster de façon permanente) :
+
+```bash
+kubectl port-forward svc/argocd-server -n argocd 8080:80
+```
+
+Et on accède à l'interface web d'ArgoCD à l'adresse http://localhost:8080
+
+Username: admin
+Password: (le mot de passe récupéré précédemment)
+
+On crée l'application argocd via le dashboard argocd en pointant vers notre dépôt Git contenant les manifests Kubernetes
+
+Pour simplifier l'accès aux fichiers de k8s, on peut créer un dossier "k8s" à la racine du projet et y mettre tous les manifests Kubernetes (deployment.yaml, service.yaml, configmap.yaml, secret.yaml)
+
+
