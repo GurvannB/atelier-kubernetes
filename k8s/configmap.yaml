@@ -5,5 +5,5 @@ metadata:
 data:
   config.json: |
     {
-      "message": "Test papapa"
+      "message": "Hello, World of Kubernetes!"
     }

@@ -240,5 +240,9 @@ On valide et on voit que l'application est créée, tourne et est en bonne sant�
 
 On peut vérifier que l'application se mette bien à jour en changeant le code et en poussant sur git
 
+## Vérifications
+
+On peut dès à présent faire des modifications dans le code, build la nouvelle image Docker, la pousser sur le registry et voir que l'application se met à jour automatiquement grâce à ArgoCD
+Si on ne modifie pas le script deployment.yaml pour y mettre la nouvelle image, les pods ne seront pas mis à jour, ils garderont l'anienne version.
 
 
