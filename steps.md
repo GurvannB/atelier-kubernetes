@@ -11,25 +11,25 @@ const app = express();
 // Lecture fichier de configuration
 let config = {};
 try {
-  const rawConfig = fs.readFileSync('/app/config/config.json');
-  config = JSON.parse(rawConfig);
+    const rawConfig = fs.readFileSync('/app/config/config.json');
+    config = JSON.parse(rawConfig);
 } catch (err) {
-  console.log("No config file found, using defaults");
+    console.log("No config file found, using defaults");
 }
 // Variables d'environnement (secrets)
 const dbUser = process.env.DB_USER || "default_user";
 const dbPassword = process.env.DB_PASSWORD || "default_password";
 app.get('/', (req, res) => {
-  res.json({
-    message: config.message || "Hello World",
-    database: {
-      user: dbUser,
-      password: dbPassword ? "******" : "not set"
-    }
-  });
+    res.json({
+        message: config.message || "Hello World",
+        database: {
+            user: dbUser,
+            password: dbPassword ? "******" : "not set"
+        }
+    });
 });
 app.listen(3000, () => {
-  console.log("Server started on port 3000");
+    console.log("Server started on port 3000");
 });
 ```
 
@@ -55,7 +55,7 @@ docker run --rm --name=node-app-test-container -p 3000:3000 -e DB_USER=test_user
 curl http://localhost:3000
 ``` 
 
-On attend le résultat suivant : 
+On attend le résultat suivant :
 
 ```json
 {"message":"Hello World"}
@@ -140,13 +140,13 @@ kubectl apply -f deployment.yaml # Appliquer le manifest du Deployment modifié
 kubectl get pods # Vérifie que les pods ont été redémarrés pour prendre en compte la nouvelle configuration
 ```
 
-On peut voir si le fichier a bien été monté dans le conteneur avec : 
+On peut voir si le fichier a bien été monté dans le conteneur avec :
 
 ```bash
 kubectl exec -it <POD_NAME> -- cat /app/config/config.json # Mon POD_NAME est app-5c87b96fd8-42hxf
 ```
 
-Et on retrouve bien nos valeurs : 
+Et on retrouve bien nos valeurs :
 ```json
 {
   "message": "Hello from our super kubernetes configmap !"
@@ -163,4 +163,31 @@ kubectl get pods # Vérifie que les pods ont été redémarrés
 kubectl exec -it <POD_NAME> -- cat /app/config/config.json # Vérifie que le fichier de configuration a été mis à jour dans le conteneur
 ```
 
+## Étape 4
 
+On crée tout d'abord un secret Kubernetes pour stocker les variables d'environnement (Fichier: secret.yaml)
+
+```bash
+kubectl apply -f secret.yaml # Appliquer le manifest du Secret
+kubectl get secrets # Vérifie que le Secret a été créé
+```
+
+```Error from server (BadRequest): error when creating "secret.yaml": Secret in version "v1" cannot be handled as a Secret: illegal base64 data at input byte 8```
+
+Les données doivent être encodées en base64, on effectue donc la modification puis on réapplique
+
+```bash
+kubectl apply -f secret.yaml # Appliquer le manifest du Secret
+kubectl get secrets # Vérifie que le Secret a été créé
+```
+
+Ensuite on modifie le Deployment pour injecter les variables d'environnement à partir du Secret, puis on applique le manifest modifié
+
+```bash
+kubectl apply -f deployment.yaml # Appliquer le manifest du Deployment modifié
+kubectl get pods # Vérifie que les pods ont été redémarrés pour prendre en compte les nouvelles variables d'environnement
+```
+
+En allant sur notre navigateur à l'adresse http://<IP_EXTERNE> utilisée plus tôt, on voit que le nom d'utilisateur a bien été modifié
+
+Si on a besoin de le modifier, il suffit de changer les valeurs dans secret.yaml, dde le réappliquer et de restart le deployment
