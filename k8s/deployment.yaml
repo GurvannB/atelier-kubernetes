@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: app
-          image: gurvannbrenne/app:1.0.0
+          image: gurvannbrenne/app:1.0.1
           ports:
             - containerPort: 3000
           volumeMounts:
