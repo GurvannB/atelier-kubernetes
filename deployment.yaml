@@ -17,3 +17,10 @@ spec:
         image: gurvannbrenne/app:1.0.0
         ports:
         - containerPort: 3000
+        volumeMounts:
+          - name: config-volume
+            mountPath: /app/config/
+      volumes:
+        - name: config-volume
+          configMap:
+            name: app-config

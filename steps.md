@@ -58,7 +58,7 @@ curl http://localhost:3000
 On attend le résultat suivant : 
 
 ```json
-{"message":"Hello World","database":{"user":"test_user","password":"******"}}
+{"message":"Hello World"}
 ```
 
 On peut arrêter le container :
@@ -123,4 +123,44 @@ kubectl get services # Vérifie que le Service a maintenant une IP externe
 ```
 
 Puis on accède à l'application avec le lien http://<IP_EXTERNE> (dans mon cas: http://192.168.64.100)
+
+## Étape 3
+
+Tout d'abord on crée un fichier de configuration dans un ConfigMap Kubernetes (Fichier: configmap.yaml)
+
+```bash
+kubectl apply -f configmap.yaml # Appliquer le manifest du ConfigMap
+kubectl get configmaps # Vérifie que le ConfigMap a été créé
+```
+
+Ensuite on modifie le Deployment pour ajouter le volume et le monter, puis on applique le manifest modifié
+
+```bash
+kubectl apply -f deployment.yaml # Appliquer le manifest du Deployment modifié
+kubectl get pods # Vérifie que les pods ont été redémarrés pour prendre en compte la nouvelle configuration
+```
+
+On peut voir si le fichier a bien été monté dans le conteneur avec : 
+
+```bash
+kubectl exec -it <POD_NAME> -- cat /app/config/config.json # Mon POD_NAME est app-5c87b96fd8-42hxf
+```
+
+Et on retrouve bien nos valeurs : 
+```json
+{
+  "message": "Hello from our super kubernetes configmap !"
+}
+```
+
+On vérifie ensuite que l'application utilise bien les valeurs de la configmap:
+On modifie le fichier de configuration pour y mettre des valeurs différentes
+
+```bash
+kubectl apply -f configmap.yaml
+kubectl rollout restart deployment app # Redémarre le déploiement pour prendre en compte les changements de la configmap
+kubectl get pods # Vérifie que les pods ont été redémarrés
+kubectl exec -it <POD_NAME> -- cat /app/config/config.json # Vérifie que le fichier de configuration a été mis à jour dans le conteneur
+```
+
 
