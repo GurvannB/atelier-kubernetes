@@ -15,6 +15,7 @@ const dbPassword = process.env.DB_PASSWORD || "default_password";
 app.get('/', (req, res) => {
   res.json({
     message: config.message || "Hello World",
+    added: 'This is a new line added in the code.',
     database: {
       user: dbUser,
       password: dbPassword ? "******" : "not set"

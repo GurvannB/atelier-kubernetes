@@ -232,4 +232,13 @@ On crée l'application argocd via le dashboard argocd en pointant vers notre dé
 
 Pour simplifier l'accès aux fichiers de k8s, on peut créer un dossier "k8s" à la racine du projet et y mettre tous les manifests Kubernetes (deployment.yaml, service.yaml, configmap.yaml, secret.yaml)
 
+En créant l'application dans argocd, on indique le chemin vers ce dossier "k8s" dans le dépôt Git
+
+On valide et on voit que l'application est créée, tourne et est en bonne santé :
+
+![argocd-app-running.png](pictures/argocd-app-running.png)
+
+On peut vérifier que l'application se mette bien à jour en changeant le code et en poussant sur git
+
+
 
