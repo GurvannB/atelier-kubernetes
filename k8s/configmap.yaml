@@ -5,5 +5,5 @@ metadata:
 data:
   config.json: |
     {
-      "message": "Hello from our super kubernetes configmap !"
+      "message": "Hello world !"
     }
